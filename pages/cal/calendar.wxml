@@ -1,0 +1,45 @@
+@import "calendar.wxss";
+
+<template name="calendar">
+    <view class="calendar">
+        <view class="tab-bar">
+            <view bindtap="changeCalendarTab" data-tap="1" class="tab {{selectDateType === 1 ? 'active' : ''}}">公历</view>
+            <view bindtap="changeCalendarTab" data-tap="2" class="tab {{selectDateType === 2 ? 'active' : ''}}">农历</view>
+        </view>
+      <picker-view indicator-class="selected-item" class="event-type_parent" indicator-style="height: 30px;" style="{{selectDateType === 1 ? '' : 'display: none;'}} width: 100%; height: 200px;" value="{{selected_value}}" id="_calendar" bindchange="changeDate">
+        <picker-view-column>
+            <view wx:for="{{years}}" class="event-type_child" >
+                <text class="event-type_txt">{{item.name}}</text>
+            </view>
+        </picker-view-column>
+        <picker-view-column>
+            <view wx:for="{{month}}" class="event-type_child" >
+                <text class="event-type_txt">{{item.name}}</text>
+            </view>
+        </picker-view-column>
+        <picker-view-column>
+            <view wx:for="{{days}}" class="event-type_child" >
+                <text class="event-type_txt">{{item.name}}</text>
+            </view>
+        </picker-view-column>
+      </picker-view>
+      <picker-view indicator-class="selected-item" class="event-type_parent" indicator-style="height: 30px;" style="{{selectDateType === 2 ? '' : 'display: none;'}}width: 100%; height: 200px;" value="{{lunar_selected_value}}" id="_lunar_calendar" bindchange="changeLunarDate">
+        <picker-view-column>
+            <view wx:for="{{lunar_years}}" class="event-type_child" >
+                <text class="event-type_txt">{{item.name}}</text>
+            </view>
+        </picker-view-column>
+        <picker-view-column>
+            <view wx:for="{{lunar_month}}" class="event-type_child" >
+                <text class="event-type_txt">{{item.name}}</text>
+            </view>
+        </picker-view-column>
+        <picker-view-column>
+            <view wx:for="{{lunar_days}}" class="event-type_child" >
+                <text class="event-type_txt">{{item.name}}</text>
+            </view>
+        </picker-view-column>
+      </picker-view>
+    </view>
+</template>
+

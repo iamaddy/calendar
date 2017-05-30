@@ -1,0 +1,14 @@
+<import src="../cal/calendar.wxml"></import>
+<!--index.wxml-->
+<view class="container">
+  <view  bindtap="bindViewTap" class="userinfo">
+    <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+    <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+  </view>
+  <view class="usermotto">
+    <text class="user-motto">{{motto}}，{{date}}</text>
+  </view>
+</view>
+
+<template is="calendar" data="{{selected_value,days,month,years,lunar_years,lunar_month,lunar_days,selectDateType,lunar_selected_value}}"></template>
+
