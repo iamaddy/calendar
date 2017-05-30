@@ -54,11 +54,6 @@
     line-height: 30px;
 }
 
-.event-type_icon {
-    width:24px;
-    height:24px;
-    margin-top: 3px;
-}
 .event-type_txt{
     display: inline-block;
 }

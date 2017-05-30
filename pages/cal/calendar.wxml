@@ -1,5 +1,3 @@
-@import "calendar.wxss";
-
 <template name="calendar">
     <view class="calendar">
         <view class="tab-bar">
