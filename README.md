@@ -74,7 +74,7 @@
 }
 ```
 
-以上用法看不懂，具体就参考代码里面index目录下。    
+以上用法看不懂的话，具体就参考代码里面index目录下。   
  
 ### 图片示例
 ![image](http://iamaddy.github.io/images/demo.png)
