@@ -8,15 +8,7 @@ Page({
     motto: 'Hello World',
     userInfo: {},
     date:"",
-    selected_value: [],
-    days: [],
-    month: [],
-    years: [],
-    lunar_years: [],
-    lunar_month: [],
-    lunar_days: [],
-    selectDateType: 1,
-    lunar_selected_value: []
+    calendar_data: {}
   },
   //事件处理函数
   bindViewTap: function() {
@@ -34,7 +26,7 @@ Page({
         userInfo:userInfo
       })
     });
-    new Calendar('key', this, function(date){
+    new Calendar(this, function(date){
         that.setData({
             date: date
         })

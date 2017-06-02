@@ -82,14 +82,17 @@ var MAX_LUNAR_YEAY = 2100;
 var MIN_LUNAR_YEAY = 1900;
 
 class Calendar {
-    constructor(key, context, changeCallBack) {
+    constructor(context, changeCallBack) {
             this.pageCtx = context;
-            this.key = key;
             this.data = {
                 selectDateType: 1
             };
             this.changeCallBack = changeCallBack;
             this.initCalendar();
+            this.pageCtx.setData({
+                'calendar_data.selectDateType': 1
+            });
+
         }
         /**
          *获取日期
@@ -98,18 +101,12 @@ class Calendar {
          *@return: {y: 年, m: 月, d: 日}
          */
     getDate(date) {
-        !_.isDate(date) && (date = new Date());
-        return {
-            y: date.getFullYear(),
-            m: date.getMonth() + 1,
-            d: date.getDate()
-        };
-    }
-    setData(data) {
-            for (var key in data) {
-                this.data[key] = data[key];
-            }
-            this.pageCtx.setData(data);
+            !_.isDate(date) && (date = new Date());
+            return {
+                y: date.getFullYear(),
+                m: date.getMonth() + 1,
+                d: date.getDate()
+            };
         }
         /**
     }
@@ -155,92 +152,108 @@ class Calendar {
 
         this.bindEvent();
     }
-    getDaysBetweenSolar(year,month,day,year1,month1,day1){
-        var date    = new Date(year, month, day).getTime();
-        var date1   = new Date(year1, month1, day1).getTime();
-        return (date1 - date) / 86400000;
-    }
-    /**
-    *根据公历日期返回农历日期
-    *@method: toLunar
-    *@param: {Num} year
-    *@param: {Num} month
-    *@param: {Num} day
-    *@return: {cy: 农历年, cm: 农历月, cd: 农历日, CM: 农历月（中文）, CD: 农历日（中文）, isleap: 是否闰月}
-    *@notice: 遵从农历习惯表达方式，如一月 --> 正月，十二月 --> 腊月，闰月等
-    */
-    toLunar(Y, M, D) {
-        var m = 1900,                                                       //起始年份
-            n = 0,
-            d = (new Date(Y, M-1, D) - new Date(1900, 0, 31))/86400000, //起始date
-            leap = this.getLeapMonth(Y),                                   //当年闰月
-            isleap = false,                                                 //标记闰月
-            _y;
-            
-        for(; m < 2050 && d>0; m++){n = this.getDaysByYear(m); d -= n};
-    
-        if(d < 0){d += n, m--};
-    
-        _y = m;
-            
-        for(m=1; m<13 && d>0; m++) {
-    
-            if(leap>0 && m == leap+1 && isleap === false){--m; isleap = true; n = this.getLeapDays(_y)}
-    
-            else{n = this.getDaysByLunarMonth(_y, m)};
-    
-            if(isleap == true && m == (leap+1)) isleap = false; 
-    
-            d -= n;
-        };
-    
-        if(d == 0 && leap > 0 && m == leap + 1 && !isleap) --m;
-    
-        if(d < 0){d += n; --m};
-        
-        //修正闰月下一月第一天为非闰月
-        if(d == 0) isleap = m == leap;
-        
-        //转换日期格式为1开始
-        d = d + 1;
-
-        var _fixDate = this.fixResult(map.lunar.fixDate,
-            Y, M, D,
-
-            // BUG?
-            Y - ( M < m ? 1 : 0),   //如果公历月份小于农历就是跨年期，农历年份比公历-1
-            m, d);
-        return {
-            cy: _fixDate.y,
-            cm: _fixDate.m,
-            cd: _fixDate.d,
-            CM: (isleap ? "闰" : "") + ((_fixDate.m > 9 ? '十' : '') + map.lunar.c1[_fixDate.m%10]).replace('十二','腊').replace(/^一/,'正') + '月',
-            CD: {'10': '初十', '20': '二十', '30': '三十'}[_fixDate.d] || (map.lunar.c2[Math.floor(_fixDate.d/10)] + map.lunar.c1[~~_fixDate.d%10]),
-            isleap: isleap
+    getDaysBetweenSolar(year, month, day, year1, month1, day1) {
+            var date = new Date(year, month, day).getTime();
+            var date1 = new Date(year1, month1, day1).getTime();
+            return (date1 - date) / 86400000;
         }
-    }
-    /**
-     * 对异常日期结果进行修正
-     * @param  {Array} data 配置修复数据
-     * @param  {Number} y    年
-     * @param  {Number} m    月
-     * @param  {Number} d    日
-     * @return {Object}      {y, m, d}
-     * fixDate: ["2013-1-11=0|-1|1", "2013-1-12~2013-2-9=0|-1|0"]
-     */
+        /**
+         *根据公历日期返回农历日期
+         *@method: toLunar
+         *@param: {Num} year
+         *@param: {Num} month
+         *@param: {Num} day
+         *@return: {cy: 农历年, cm: 农历月, cd: 农历日, CM: 农历月（中文）, CD: 农历日（中文）, isleap: 是否闰月}
+         *@notice: 遵从农历习惯表达方式，如一月 --> 正月，十二月 --> 腊月，闰月等
+         */
+    toLunar(Y, M, D) {
+            var m = 1900, //起始年份
+                n = 0,
+                d = (new Date(Y, M - 1, D) - new Date(1900, 0, 31)) / 86400000, //起始date
+                leap = this.getLeapMonth(Y), //当年闰月
+                isleap = false, //标记闰月
+                _y;
+
+            for (; m < 2050 && d > 0; m++) {
+                n = this.getDaysByYear(m);
+                d -= n
+            };
+
+            if (d < 0) {
+                d += n, m--
+            };
+
+            _y = m;
+
+            for (m = 1; m < 13 && d > 0; m++) {
+
+                if (leap > 0 && m == leap + 1 && isleap === false) {
+                    --m;
+                    isleap = true;
+                    n = this.getLeapDays(_y)
+                } else {
+                    n = this.getDaysByLunarMonth(_y, m)
+                };
+
+                if (isleap == true && m == (leap + 1)) isleap = false;
+
+                d -= n;
+            };
+
+            if (d == 0 && leap > 0 && m == leap + 1 && !isleap) --m;
+
+            if (d < 0) {
+                d += n;
+                --m
+            };
+
+            //修正闰月下一月第一天为非闰月
+            if (d == 0) isleap = m == leap;
+
+            //转换日期格式为1开始
+            d = d + 1;
+
+            var _fixDate = this.fixResult(map.lunar.fixDate,
+                Y, M, D,
+
+                // BUG?
+                Y - (M < m ? 1 : 0), //如果公历月份小于农历就是跨年期，农历年份比公历-1
+                m, d);
+            return {
+                cy: _fixDate.y,
+                cm: _fixDate.m,
+                cd: _fixDate.d,
+                CM: (isleap ? "闰" : "") + ((_fixDate.m > 9 ? '十' : '') + map.lunar.c1[_fixDate.m % 10]).replace('十二', '腊').replace(/^一/, '正') + '月',
+                CD: {
+                    '10': '初十',
+                    '20': '二十',
+                    '30': '三十'
+                }[_fixDate.d] || (map.lunar.c2[Math.floor(_fixDate.d / 10)] + map.lunar.c1[~~_fixDate.d % 10]),
+                isleap: isleap
+            }
+        }
+        /**
+         * 对异常日期结果进行修正
+         * @param  {Array} data 配置修复数据
+         * @param  {Number} y    年
+         * @param  {Number} m    月
+         * @param  {Number} d    日
+         * @return {Object}      {y, m, d}
+         * fixDate: ["2013-1-11=0|-1|1", "2013-1-12~2013-2-9=0|-1|0"]
+         */
     fixResult(data, Y, M, D, y, m, d) {
-        if(data && data.length) {
+        if (data && data.length) {
             var l = data.length,
-            _match = function(y, m, d, str, pre, suf) {
-                str = str.split("~");
-                str[1] = str[1] || str[0];
-                pre = str[0].split("-");
-                suf = str[1].split("-");
-                return new Date(y, m, d) >= new Date(pre[0], pre[1], pre[2]) && new Date(y, m, d) <= new Date(suf[0], suf[1], suf[2])
-            },
-            val,
-            li;
-            while(l--) {
+                _match = function(y, m, d, str, pre, suf) {
+                    str = str.split("~");
+                    str[1] = str[1] || str[0];
+                    pre = str[0].split("-");
+                    suf = str[1].split("-");
+                    return new Date(y, m, d) >= new Date(pre[0], pre[1], pre[2]) && new Date(y, m, d) <= new Date(suf[0], suf[1], suf[2])
+                },
+                val,
+                li;
+            while (l--) {
                 li = data[l].split("=");
                 val = li[1].split("|");
                 _match(Y, M, D, li[0]) && (y = y + ~~(val[0]), m = m + ~~(val[1]), d = d + ~~(val[2]));
@@ -265,16 +278,17 @@ class Calendar {
         var m = date.getMonth();
         var d = date.getDate();
 
-        this.setData({
-            years: year
+        this.pageCtx.setData({
+            'calendar_data.years': year
         });
-
+        this.data.years = year;
         this.getMonths(y);
         this.getDayCount(m);
 
-        this.setData({
-            selected_value: [y - MIN_LUNAR_YEAY, m, d - 1]
-        })
+        this.pageCtx.setData({
+            'calendar_data.selected_value': [y - MIN_LUNAR_YEAY, m, d - 1]
+        });
+        this.data.selected_value = [y - MIN_LUNAR_YEAY, m, d - 1];
     }
     getMonths(y) {
         var month = [];
@@ -286,9 +300,10 @@ class Calendar {
             })
         }
 
-        this.setData({
-            month: month
+        this.pageCtx.setData({
+            'calendar_data.month': month
         });
+        this.data.month = month;
     }
     getDayCount(m) {
         var days = [];
@@ -298,65 +313,68 @@ class Calendar {
                 name: i + 1 + '日'
             })
         }
-        this.setData({
-            days: days
-        })
+        this.pageCtx.setData({
+            'calendar_data.days': days
+        });
+        this.data.days = days;
     }
     initLunarCalendar() {
-        var year = [];
-        for (var i = MIN_LUNAR_YEAY; i < MAX_LUNAR_YEAY; i++) {
-            year.push({
-                id: i,
-                name: i + ' ' + this.cyclical(i - 3)
+            var year = [];
+            for (var i = MIN_LUNAR_YEAY; i < MAX_LUNAR_YEAY; i++) {
+                year.push({
+                    id: i,
+                    name: i + ' ' + this.cyclical(i - 3)
+                });
+            }
+            var date = new Date();
+            var y = date.getFullYear();
+            var m = date.getMonth();
+            var d = date.getDate();
+
+            var lunar = this.toLunar(y, m + 1, d);
+
+            this.pageCtx.setData({
+                'calendar_data.lunar_years': year
             });
+            this.data.lunar_years = year;
+
+            this.getLunarMonths(y);
+
+            this.getLunarDayCount(y, m);
+
+            this.pageCtx.setData({
+                'calendar_data.lunar_selected_value': [lunar.cy - MIN_LUNAR_YEAY, lunar.cm - 1, lunar.cd - 1]
+            });
+            this.data.lunar_selected_value = [lunar.cy - MIN_LUNAR_YEAY, lunar.cm - 1, lunar.cd - 1];
         }
-        var date = new Date();
-        var y = date.getFullYear();
-        var m = date.getMonth();
-        var d = date.getDate();
-
-        var lunar = this.toLunar(y, m + 1, d);
-
-        this.setData({
-            lunar_years: year
-        });
-
-        this.getLunarMonths(y);
-
-        this.getLunarDayCount(y, m);
-
-        this.setData({
-            lunar_selected_value: [lunar.cy - MIN_LUNAR_YEAY, lunar.cm - 1, lunar.cd - 1]
-        })
-    }
-    /**
-    *返回公历年份天数
-    *@method: getDaysByYear
-    *@param: {Num} year
-    *@return: {Num}
-    */
+        /**
+         *返回公历年份天数
+         *@method: getDaysByYear
+         *@param: {Num} year
+         *@return: {Num}
+         */
     getDaysByYear(y) {
-        for(var i=0x8000, sum=348; i>0x8; i>>=1) sum += (map.lunar.leap[y-1900] & i) ? 1 : 0;
-        return sum + this.getLeapDays(y);
-    }
-    /**
-    *返回农历年份的闰月月份
-    *@method: getLeapMonth
-    *@param: {Num} year
-    *@return: {Num} || 0
-    */
+            for (var i = 0x8000, sum = 348; i > 0x8; i >>= 1) sum += (map.lunar.leap[y - 1900] & i) ? 1 : 0;
+            return sum + this.getLeapDays(y);
+        }
+        /**
+         *返回农历年份的闰月月份
+         *@method: getLeapMonth
+         *@param: {Num} year
+         *@return: {Num} || 0
+         */
     getLeapMonth(y) {
-        return map.lunar.leap[y-1900] & 0xf;
+        return map.lunar.leap[y - 1900] & 0xf;
     }
-    
+
     /**
-    *返回农历年份的闰月天数
-    *@method: getLeapDays
-    *@param: {Num} year
-    *@return: {Num} || 0
-    */
+     *返回农历年份的闰月天数
+     *@method: getLeapDays
+     *@param: {Num} year
+     *@return: {Num} || 0
+     */
     getLeapDays(y) {
-        return this.getLeapMonth(y) ? (map.lunar.leap[y-1900] & 0x10000) ? 30 : 29 : 0;
+        return this.getLeapMonth(y) ? (map.lunar.leap[y - 1900] & 0x10000) ? 30 : 29 : 0;
     }
     getLunarMonths(y) {
         var month = [];
@@ -376,9 +394,10 @@ class Calendar {
             });
         }
 
-        this.setData({
-            lunar_month: month
+        this.pageCtx.setData({
+            'calendar_data.lunar_month': month
         });
+        this.data.lunar_month = month;
     }
 
     getLunarDayCount(y, m, isleap) {
@@ -390,20 +409,21 @@ class Calendar {
                 name: this.getLunarDayName(i)
             })
         }
-        this.setData({
-            lunar_days: days
-        })
+        this.pageCtx.setData({
+            'calendar_data.lunar_days': days
+        });
+        this.data.lunar_days = days;
     }
     getLunarDayName(day) {
         var a = Math.floor(day / 10);
         var str = '';
-        if(day < 10){
+        if (day < 10) {
             str = map.lunar.c2[0];
-        }else if(day < 19){
+        } else if (day < 19) {
             str = map.lunar.c2[1];
-        }else if(day < 29){
+        } else if (day < 29) {
             str = map.lunar.c2[2];
-        }else{
+        } else {
             str = map.lunar.c2[3];
         }
 
@@ -416,7 +436,6 @@ class Calendar {
     }
     changeDate(e) {
         var value = e.detail.value;
-        if(value[0] === 0 && value[1] === 0 & value[1] === 0)return;
 
         var year = MIN_LUNAR_YEAY + value[0];
         var oldValue = this.data.selected_value.slice(0, 3);
@@ -437,7 +456,6 @@ class Calendar {
     }
     changeLunarDate(e) {
         var value = e.detail.value;
-        if(value[0] === 0 && value[1] === 0 & value[1] === 0)return;
 
         var year = MIN_LUNAR_YEAY + value[0];
         var oldValue = this.data.lunar_selected_value.slice(0, 3);
@@ -459,21 +477,25 @@ class Calendar {
 
         this.changeCallBack && this.changeCallBack(this.getCurrentSelectDate());
     }
-    getCurrentSelectDate(){
-        if(this.data.selectDateType === 1){
+    getCurrentSelectDate() {
+        if (this.data.selectDateType === 1) {
             return [this.data.years[this.data.selected_value[0]].name,
-            this.data.month[this.data.selected_value[1]].name,
-            this.data.days[this.data.selected_value[2]].name].join('');
-        }else{
+                this.data.month[this.data.selected_value[1]].name,
+                this.data.days[this.data.selected_value[2]].name
+            ].join('');
+        } else {
             return [this.data.lunar_years[this.data.lunar_selected_value[0]].id,
-            this.data.lunar_month[this.data.lunar_selected_value[1]].name,
-            this.data.lunar_days[this.data.lunar_selected_value[2]].name].join(' ');
+                this.data.lunar_month[this.data.lunar_selected_value[1]].name,
+                this.data.lunar_days[this.data.lunar_selected_value[2]].name
+            ].join(' ');
         }
     }
     changeCalendarTab(e) {
-        this.setData({
-            selectDateType: +e.target.dataset.tap
+        this.pageCtx.setData({
+            'calendar_data.selectDateType':
+                +e.target.dataset.tap
         });
+        this.data.selectDateType = +e.target.dataset.tap;
         this.changeCallBack && this.changeCallBack(this.getCurrentSelectDate());
     }
 };

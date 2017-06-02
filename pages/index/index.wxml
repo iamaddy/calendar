@@ -10,5 +10,5 @@
   </view>
 </view>
 
-<template is="calendar" data="{{selected_value,days,month,years,lunar_years,lunar_month,lunar_days,selectDateType,lunar_selected_value}}"></template>
+<template is="calendar" data="{{...calendar_data}}"></template>
 

@@ -5,7 +5,7 @@
 ```
 <import src="../cal/calendar.wxml"></import>
 <!--index.wxml-->
-<template is="calendar" data="{{selected_value,days,month,years,lunar_years,lunar_month,lunar_days,selectDateType,lunar_selected_value}}"></template>
+<template is="calendar" data="{{calendar_data}}"></template>
 ```
 ### JS代码使用：
 ```
@@ -13,20 +13,12 @@
  
  Page({
   data: {
-    selected_value: [],
-    days: [],
-    month: [],
-    years: [],
-    lunar_years: [],
-    lunar_month: [],
-    lunar_days: [],
-    selectDateType: 1,
-    lunar_selected_value: []
+    calendar_data: {}
   },
   ....
   
   // 指定选择器回调函数
-  new Calendar('key', this, function(date){
+  new Calendar(this, function(date){
       that.setData({
           date: date
       })
