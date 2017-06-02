@@ -29,7 +29,7 @@
         </picker-view-column>
         <picker-view-column>
             <view wx:for="{{lunar_month}}" class="event-type_child" >
-                <text class="event-type_txt">{{item.name}}</text>
+                <text class="event-type_txt" data-id="{{item.id}}">{{item.name}}</text>
             </view>
         </picker-view-column>
         <picker-view-column>
