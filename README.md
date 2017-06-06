@@ -17,12 +17,23 @@
   },
   ....
   
-  // 指定选择器回调函数
-  new Calendar(this, function(date){
+  var calendar = new Calendar(this, function(date){
+      // 指定选择器回调函数
       that.setData({
-          date: date
+          date: date.name
       })
   });
+  
+  /*return {
+    day:6,
+    month:6
+    name:"2017年6月6日"
+    type:1
+    year:2017
+  }*/
+  // 返回当前选择时间
+  var currentDate = calendar.getCurrentSelectDate();
+  console.log(currentDate)
 ```
 
 ### 样式
@@ -66,7 +77,7 @@
 }
 ```
 
-以上用法看不懂的话，具体就参考代码里面index目录下。   
+以上用法看不懂的话，具体就参考index目录下的代码。   
  
 ### 图片示例
 ![image](http://iamaddy.github.io/images/demo.png)

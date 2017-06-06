@@ -405,7 +405,7 @@ class Calendar {
         var num = isleap ? this.getLeapDays(y) : this.getDaysByLunarMonth(y, m + 1);
         for (var i = 0; i < num; i++) {
             days.push({
-                i: i + 1,
+                id: i + 1,
                 name: this.getLunarDayName(i)
             })
         }
@@ -462,7 +462,6 @@ class Calendar {
 
         this.data.lunar_selected_value = value;
 
-
         if (value[0] !== oldValue[0]) {
             this.getLunarMonths(year);
             var month = this.data.lunar_month[value[1]];
@@ -479,16 +478,34 @@ class Calendar {
     }
     getCurrentSelectDate() {
         if (this.data.selectDateType === 1) {
-            return [this.data.years[this.data.selected_value[0]].name,
+            return {
+                name: this.getDayName(),
+                type: this.data.selectDateType,
+                year: this.data.years[this.data.selected_value[0]].id,
+                month: this.data.month[this.data.selected_value[1]].id + 1,
+                day: this.data.days[this.data.selected_value[2]].id + 1,
+            }
+        } else {
+            return {
+                name: this.getLunarName(),
+                type: this.data.selectDateType,
+                year: this.data.lunar_years[this.data.lunar_selected_value[0]].id,
+                month: this.data.lunar_month[this.data.lunar_selected_value[1]].id,
+                day: this.data.lunar_days[this.data.lunar_selected_value[2]].id
+            }
+        }
+    }
+    getDayName(){
+        return [this.data.years[this.data.selected_value[0]].name,
                 this.data.month[this.data.selected_value[1]].name,
                 this.data.days[this.data.selected_value[2]].name
             ].join('');
-        } else {
-            return [this.data.lunar_years[this.data.lunar_selected_value[0]].id,
+    }
+    getLunarName(){
+        return [this.data.lunar_years[this.data.lunar_selected_value[0]].id,
                 this.data.lunar_month[this.data.lunar_selected_value[1]].name,
                 this.data.lunar_days[this.data.lunar_selected_value[2]].name
-            ].join(' ');
-        }
+            ].join(' ')
     }
     changeCalendarTab(e) {
         this.pageCtx.setData({

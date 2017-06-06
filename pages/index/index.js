@@ -26,10 +26,12 @@ Page({
         userInfo:userInfo
       })
     });
-    new Calendar(this, function(date){
+    var calendar = new Calendar(this, function(date){
         that.setData({
-            date: date
+            date: date.name
         })
     });
+    var currentDate = calendar.getCurrentSelectDate();
+    console.log(currentDate)
   }
 })
