@@ -5,7 +5,7 @@
 ```
 <import src="../cal/calendar.wxml"></import>
 <!--index.wxml-->
-<template is="calendar" data="{{calendar_data}}"></template>
+<template is="calendar" data="{{...calendar_data}}"></template>
 ```
 ### JS代码使用：
 ```

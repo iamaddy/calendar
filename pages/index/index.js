@@ -32,6 +32,7 @@ Page({
         })
     });
     var currentDate = calendar.getCurrentSelectDate();
-    console.log(currentDate)
+    console.log(currentDate);
   }
+
 })
