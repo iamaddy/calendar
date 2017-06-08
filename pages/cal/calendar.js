@@ -283,7 +283,7 @@ class Calendar {
         });
         this.data.years = year;
         this.getMonths(y);
-        this.getDayCount(m);
+        this.getDayCount(y, m);
 
         this.pageCtx.setData({
             'calendar_data.selected_value': [y - MIN_LUNAR_YEAY, m, d - 1]
@@ -305,9 +305,16 @@ class Calendar {
         });
         this.data.month = month;
     }
-    getDayCount(m) {
+    getDayCount(y, m) {
         var days = [];
-        for (var i = 0; i < map.days[m]; i++) {
+        var ms;
+        if(m === 1){
+            // 公里闰2月
+            ms = (y % 400 === 0 || y % 4 === 0) ? 29 : map.days[m];
+        }else{
+            ms = map.days[m];
+        }
+        for (var i = 0; i < ms; i++) {
             days.push({
                 id: i,
                 name: i + 1 + '日'
@@ -348,7 +355,7 @@ class Calendar {
             this.data.lunar_selected_value = [lunar.cy - MIN_LUNAR_YEAY, lunar.cm - 1, lunar.cd - 1];
         }
         /**
-         *返回公历年份天数
+         *返回农历年份天数
          *@method: getDaysByYear
          *@param: {Num} year
          *@return: {Num}
@@ -444,11 +451,11 @@ class Calendar {
 
         if (value[0] !== oldValue[0]) {
             this.getMonths(year);
-            this.getDayCount(value[1]);
+            this.getDayCount(value[0], value[1]);
         }
 
         if (value[1] !== oldValue[1]) {
-            this.getDayCount(value[1]);
+            this.getDayCount(value[0], value[1]);
         }
 
         this.changeCallBack && this.changeCallBack(this.getCurrentSelectDate());
