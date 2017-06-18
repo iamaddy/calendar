@@ -81,3 +81,8 @@
  
 ### 图片示例
 ![image](http://iamaddy.github.io/images/demo.png)
+
+
+如何写一个组件，请参看我的博客，[如何写一个微信小程序组件
+](http://www.iamaddy.net/2017/06/how-to-make-a-wxapp-component/)
+
